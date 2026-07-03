@@ -1,0 +1,8 @@
+{
+    "id": "samples.flappy-fx",
+    "name": "Flappy FX",
+    "version": "0.1.0",
+    "entry": "index.html",
+    "apiVersion": 0,
+    "capabilities": []
+}

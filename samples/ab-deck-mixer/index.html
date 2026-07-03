@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AB Deck Mixer</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AB Deck Mixer</h1>
+      <p>Click a deck preview to load media (video / HAP / image). Output publishes as MediaOut <code>Deck Mixer</code>.</p>
+    </header>
+
+    <section class="decks">
+      <div class="deck" id="deckA">
+        <div class="preview" data-deck="a">
+          <span class="hint">click to load</span>
+        </div>
+        <div class="deck-title"><span class="name">—</span><span class="badge"></span></div>
+        <div class="transport">
+          <button class="playpause">▶</button>
+          <input class="seek" type="range" min="0" max="1" step="0.001" value="0">
+          <span class="time">0:00</span>
+        </div>
+        <div class="deck-opts">
+          <label>rate <input class="rate" type="range" min="0.25" max="2" step="0.05" value="1"><span class="rate-val">1.00</span></label>
+          <label class="loop-label"><input class="loop" type="checkbox" checked> loop</label>
+        </div>
+      </div>
+
+      <div class="mixer">
+        <div class="xfade-label">A ⟵ MIX ⟶ B</div>
+        <input id="crossfade" type="range" min="0" max="1" step="0.001" value="0.5">
+        <button id="autoFade" type="button">AUTO ⟲</button>
+        <div class="hint" id="mixerHint">crossfader is MIDI-learnable</div>
+      </div>
+
+      <div class="deck" id="deckB">
+        <div class="preview" data-deck="b">
+          <span class="hint">click to load</span>
+        </div>
+        <div class="deck-title"><span class="name">—</span><span class="badge"></span></div>
+        <div class="transport">
+          <button class="playpause">▶</button>
+          <input class="seek" type="range" min="0" max="1" step="0.001" value="0">
+          <span class="time">0:00</span>
+        </div>
+        <div class="deck-opts">
+          <label>rate <input class="rate" type="range" min="0.25" max="2" step="0.05" value="1"><span class="rate-val">1.00</span></label>
+          <label class="loop-label"><input class="loop" type="checkbox" checked> loop</label>
+        </div>
+      </div>
+    </section>
+
+    <pre id="log"></pre>
+  </main>
+
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

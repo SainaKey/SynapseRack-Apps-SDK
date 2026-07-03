@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flappy FX</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Flappy FX</h1>
+      <p>Click the preview (or press Space while it has focus) to flap — every flap fires a different VJ effect. The game is published as MediaOut <code>Flappy FX</code>.</p>
+    </header>
+
+    <section class="row">
+      <label for="layerSelect">Kick Layer</label>
+      <select id="layerSelect">
+        <option value="">(none)</option>
+      </select>
+      <button id="refreshLayers" type="button">↻</button>
+      <span id="kickReadout"></span>
+    </section>
+
+    <section class="row">
+      <label for="tapTempo">Tap Tempo</label>
+      <input type="checkbox" id="tapTempo" checked>
+      <span class="hint">flap rhythm drives the global BPM</span>
+    </section>
+
+    <section id="preview" class="preview" data-synapse-surface-type="texture">
+      Output preview
+    </section>
+
+    <pre id="log"></pre>
+  </main>
+
+  <!-- Bridge type defs + userland SDK. synapse-sdk.js attaches window.SynapseSDK; see SYNAPSE_API.md. -->
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

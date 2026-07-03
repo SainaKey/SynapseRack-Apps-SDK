@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Synapse App</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Synapse App</h1>
+      <p>New project scaffold. Edit <code>main.js</code> and reload to iterate.</p>
+    </header>
+
+    <section class="row">
+      <label for="hue">Hue</label>
+      <input id="hue" type="range" min="0" max="360" step="1" value="200">
+      <span id="hueReadout">200</span>
+    </section>
+
+    <section id="preview" class="preview" data-synapse-surface-type="texture">
+      Output preview
+    </section>
+
+    <pre id="log"></pre>
+  </main>
+
+  <!-- Bridge type defs + userland SDK. synapse-sdk.js attaches window.SynapseSDK; see SYNAPSE_API.md. -->
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>
