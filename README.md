@@ -1,5 +1,7 @@
 # SynapseRack Apps SDK
 
+[日本語](README.ja.md)
+
 Build windowed JavaScript apps that run **inside [SynapseRack](https://github.com/SainaKey/SynapseRack)** — the node-based VJ environment. An app is a plain HTML/JS folder: no build step, no toolchain, hot-reloaded on save. Apps talk to the host through the `window.synapse` bridge to play media, composite offscreen layers, publish textures into the user's node graph, and bind parameters to MIDI / LFO / audio.
 
 > **Status: v0 preview.** The API surface is documented in [`docs/SYNAPSE_API.md`](docs/SYNAPSE_API.md) and may change before v1.
