@@ -69,6 +69,10 @@ For an agentic loop, SynapseRack ships a **dev-mode MCP server** (menu: *Synapse
 | --- | --- |
 | [`ab-deck-mixer`](samples/ab-deck-mixer/) | Two media decks with native file picking, transport controls, an A/B crossfader with MIDI bind + auto-LFO, published as a `Deck Mixer` output. Multi-instance enabled — launch several independent mixers. |
 | [`flappy-fx`](samples/flappy-fx/) | A playable game whose jumps kick FX on a user-chosen layer and whose tap rhythm drives the global BPM — apps as instruments, not just panels. |
+| [`color-pad`](samples/color-pad/) | A color-flash instrument on a published window (`web.createWindow` with `publish`): pads + full-bleed color, cut/momentary modes, fade — all page-local animation, zero per-frame bridge calls. |
+| [`bg-looper`](samples/bg-looper/) | A set-and-forget background video playlist: auto-advance driven by the player's `onEnd` event, playlist persisted in `storage`, missing files skipped without stalling. |
+| [`control-surface`](samples/control-surface/) | A performance panel for the user's existing layers (`layers.list` → opacity / rotation-Z faders) — and an honest note on what v0 bindings can't target yet. |
+| [`vj-notepad`](samples/vj-notepad/) | Live text overlays (`render.createText`): size/color/align on the fly, an 8-slot preset bank persisted in `storage`, flash mode. |
 
 Each sample folder is a complete app: copy it into your Apps folder as-is.
 

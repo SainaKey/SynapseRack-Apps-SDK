@@ -69,6 +69,10 @@
 | --- | --- |
 | [`ab-deck-mixer`](samples/ab-deck-mixer/) | ネイティブファイル選択つきの2デッキ、トランスポート、MIDIバインド＋自動LFO付きA/Bクロスフェーダー、`Deck Mixer` 出力として公開。マルチインスタンス対応 — 独立したミキサーを何台でも。 |
 | [`flappy-fx`](samples/flappy-fx/) | ジャンプするたびに選択レイヤーへFXがかかり、タップのリズムがグローバルBPMを動かす、遊べるゲーム。アプリは「パネル」ではなく「楽器」になれる、というデモ。 |
+| [`color-pad`](samples/color-pad/) | カラーフラッシュ楽器。公開ウィンドウ（`web.createWindow` の `publish`）にパッドと全面カラーを置き、タップでカット/モーメンタリ発色。ページ内アニメーションだけで動く＝毎フレームのブリッジ呼び出しゼロ。 |
+| [`bg-looper`](samples/bg-looper/) | 背景動画のプレイリストループ。プレイヤーの `onEnd` イベントで自動送り、`storage` でプレイリスト永続化、欠損ファイルはスキップして走り続ける。 |
+| [`control-surface`](samples/control-surface/) | ユーザーの既存レイヤーの操作卓（`layers.list` → opacity / rotationZ フェーダー）。v0でレイヤーがバインド対象にできない制限も正直に文書化。 |
+| [`vj-notepad`](samples/vj-notepad/) | ライブテキストオーバーレイ（`render.createText`）。サイズ・色・整列のライブ変更、`storage` 永続の8プリセットバンク、フラッシュ表示。 |
 
 各サンプルフォルダは完結したアプリです。そのままAppsフォルダにコピーしてください。
 

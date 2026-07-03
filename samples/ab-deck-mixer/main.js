@@ -116,9 +116,9 @@ async function boot() {
   const deckA = setupDeck('a', '#deckA');
   const deckB = setupDeck('b', '#deckB');
 
-  const session = await window.synapse.render.createSession({ id: 'deck-mixer-session' });
-  deckA.player = await session.createPlayer({ id: 'deckA' });
-  deckB.player = await session.createPlayer({ id: 'deckB' });
+  // createPlayer directly — render.createSession is a deprecated no-op shim (see SYNAPSE_API.md).
+  deckA.player = await window.synapse.render.createPlayer({ id: 'deckA' });
+  deckB.player = await window.synapse.render.createPlayer({ id: 'deckB' });
 
   const mixer = await app.mixer('ab-mix', {
     type: 'crossfade',

@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BG Looper</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>BG Looper</h1>
+      <p>A set-and-forget background loop. Build a playlist; it plays in order forever and publishes one MediaOut <code>BG Looper</code> to wire behind everything.</p>
+    </header>
+
+    <section class="now">
+      <div class="preview" id="preview"></div>
+      <div class="now-meta">
+        <div class="now-label">now playing</div>
+        <div class="now-title" id="nowTitle">—</div>
+        <div class="transport">
+          <button id="prev" type="button" title="Previous">⏮</button>
+          <button id="playpause" type="button" title="Play / Pause">▶</button>
+          <button id="next" type="button" title="Next">⏭</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="list-section">
+      <div class="list-head">
+        <span>Playlist</span>
+        <button id="add" type="button">+ Add video…</button>
+      </div>
+      <ol class="playlist" id="playlist"></ol>
+      <p class="hint" id="emptyHint">Playlist is empty — click “Add video…” to queue clips.</p>
+    </section>
+
+    <pre id="log"></pre>
+  </main>
+
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

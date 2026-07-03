@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VJ Notepad</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>VJ Notepad</h1>
+      <p>Type a message, hit send — it renders as a transparent overlay published as MediaOut <code>Notepad</code>. Wire it over your mix.</p>
+    </header>
+
+    <section class="composer">
+      <textarea id="text" rows="2" placeholder="Type a shoutout, track ID, warning…&#10;Enter to send · Shift+Enter for a newline"></textarea>
+      <div class="composer-buttons">
+        <button id="send" type="button" class="primary">Send</button>
+        <button id="flash" type="button">Flash <span id="flashSecsLabel">3s</span></button>
+        <button id="clear" type="button">Clear</button>
+      </div>
+    </section>
+
+    <section class="style-controls">
+      <label>Size
+        <input id="size" type="range" min="12" max="400" step="1" value="120">
+        <span id="sizeVal" class="val">120</span>
+      </label>
+      <label>Color
+        <input id="color" type="color" value="#ffffff">
+      </label>
+      <div class="align" role="group" aria-label="alignment">
+        <button class="align-btn" data-align="left" type="button">⯇</button>
+        <button class="align-btn active" data-align="center" type="button">≡</button>
+        <button class="align-btn" data-align="right" type="button">⯈</button>
+      </div>
+      <label class="flash-secs">Flash for
+        <input id="flashSecs" type="range" min="1" max="15" step="1" value="3">
+        <span id="flashSecsVal" class="val">3s</span>
+      </label>
+    </section>
+
+    <section class="presets">
+      <div class="presets-label">Presets — click to fire, Shift+click to save current</div>
+      <div id="presetBank" class="preset-bank"></div>
+    </section>
+
+    <pre id="log"></pre>
+  </main>
+
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

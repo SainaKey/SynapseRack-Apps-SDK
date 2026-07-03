@@ -1,0 +1,122 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d1014;
+  color: #f4f5f7;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+main {
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-height: 100%;
+  padding: 24px;
+}
+
+header { display: grid; gap: 4px; }
+h1 { margin: 0; font-size: 22px; font-weight: 700; }
+header p { margin: 0; color: #9aa4b2; }
+code { color: #a8d8ff; }
+
+/* now playing */
+.now {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+  align-items: center;
+  background: #12161c;
+  border: 1px solid #232a34;
+  border-radius: 10px;
+  padding: 14px;
+}
+.preview {
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  background: #05070a;
+  border: 1px solid #2b323d;
+  overflow: hidden;
+}
+.now-meta { display: grid; gap: 8px; }
+.now-label { color: #6b7482; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.now-title {
+  font-size: 18px;
+  color: #cdd5e0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.transport { display: flex; gap: 8px; }
+
+/* playlist */
+.list-section { display: grid; gap: 8px; }
+.list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #9aa4b2;
+  letter-spacing: 1px;
+}
+
+.playlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #12161c;
+  border: 1px solid #232a34;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+.entry.active { border-color: #4a90d9; background: #16202b; }
+.entry.missing .entry-title { color: #d98b8b; }
+
+.entry-title {
+  flex: 1;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: #cdd5e0;
+  padding: 4px 6px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entry-title:hover { color: #fff; }
+.entry.active .entry-title { color: #9ecbff; }
+
+.entry-controls { display: flex; gap: 4px; }
+
+button {
+  background: #1a2028;
+  color: #f4f5f7;
+  border: 1px solid #2b323d;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+button:hover { border-color: #4a90d9; }
+button:disabled { opacity: 0.3; cursor: default; }
+button:disabled:hover { border-color: #2b323d; }
+
+.transport button { min-width: 44px; font-size: 15px; }
+.icon { min-width: 30px; padding: 4px 8px; font-size: 12px; }
+
+.hint { color: #6b7482; font-size: 12px; margin: 0; }
+
+pre#log {
+  min-height: 40px;
+  margin: 0;
+  border: 1px solid #232a34;
+  border-radius: 6px;
+  padding: 10px;
+  overflow: auto;
+  background: #10141a;
+  color: #9aa4b2;
+  font-size: 12px;
+  white-space: pre-wrap;
+}

@@ -1,0 +1,120 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d1014;
+  color: #f4f5f7;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+main {
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-height: 100%;
+  padding: 24px;
+}
+
+header { display: grid; gap: 4px; }
+h1 { margin: 0; font-size: 22px; font-weight: 700; }
+header p { margin: 0; color: #9aa4b2; }
+code { color: #a8d8ff; }
+
+/* ---- composer ---- */
+.composer { display: grid; gap: 10px; }
+textarea {
+  background: #0a0d11;
+  color: #e7eaf0;
+  border: 1px solid #2b323d;
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  font: 15px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+textarea:focus { outline: none; border-color: #4a90d9; }
+.composer-buttons { display: flex; gap: 8px; }
+
+/* ---- style controls ---- */
+.style-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  background: #12161c;
+  border: 1px solid #232a34;
+  border-radius: 10px;
+  padding: 14px;
+}
+.style-controls label { display: flex; align-items: center; gap: 8px; color: #9aa4b2; }
+.style-controls .val { font-variant-numeric: tabular-nums; min-width: 34px; color: #cdd5e0; }
+#size { width: 160px; }
+#flashSecs { width: 90px; }
+input[type="color"] {
+  width: 40px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #2b323d;
+  border-radius: 6px;
+  background: #0a0d11;
+  cursor: pointer;
+}
+
+.align { display: flex; gap: 4px; }
+.align-btn { min-width: 34px; padding: 6px 8px; }
+
+/* ---- presets ---- */
+.presets { display: grid; gap: 8px; }
+.presets-label { color: #6b7482; font-size: 12px; }
+.preset-bank {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.preset {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  min-height: 52px;
+  align-content: center;
+}
+.preset .preset-num { font-size: 11px; color: #6b7482; }
+.preset .preset-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #cdd5e0;
+}
+.preset .preset-text.empty { color: #4a5361; font-style: italic; }
+.preset.filled { border-color: #3a4c63; background: #141b24; }
+.preset.filled:hover { border-color: #57c78e; }
+
+/* ---- shared button styling (mirrors ab-deck-mixer) ---- */
+button {
+  background: #1a2028;
+  color: #f4f5f7;
+  border: 1px solid #2b323d;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+button:hover { border-color: #4a90d9; }
+button.active { background: #2b5f8f; border-color: #4a90d9; }
+button.primary { background: #2b5f8f; border-color: #4a90d9; font-weight: 600; }
+button.primary:hover { background: #367ab5; }
+
+pre#log {
+  min-height: 40px;
+  margin: 0;
+  border: 1px solid #232a34;
+  border-radius: 6px;
+  padding: 10px;
+  overflow: auto;
+  background: #10141a;
+  color: #9aa4b2;
+  font-size: 12px;
+  white-space: pre-wrap;
+}

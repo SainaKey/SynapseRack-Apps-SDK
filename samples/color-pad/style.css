@@ -1,0 +1,60 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d1014;
+  color: #f4f5f7;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+main {
+  box-sizing: border-box;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  min-height: 100%;
+  padding: 24px;
+}
+
+header { display: grid; gap: 4px; }
+h1 { margin: 0; font-size: 22px; font-weight: 700; }
+header p { margin: 0; color: #9aa4b2; }
+code { color: #a8d8ff; }
+
+.preview-wrap {
+  display: grid;
+}
+#preview {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  background: #05070a;
+  border: 1px solid #2b323d;
+  overflow: hidden;
+}
+
+.controls {
+  display: grid;
+  gap: 12px;
+  background: #12161c;
+  border: 1px solid #232a34;
+  border-radius: 10px;
+  padding: 14px;
+}
+.controls label { display: flex; align-items: center; gap: 10px; }
+.controls .fade input[type="range"] { flex: 1; }
+#fadeVal { font-variant-numeric: tabular-nums; min-width: 56px; text-align: right; color: #9aa4b2; }
+.hint { margin: 0; color: #6b7482; font-size: 12px; }
+
+pre#log {
+  min-height: 40px;
+  margin: 0;
+  border: 1px solid #232a34;
+  border-radius: 6px;
+  padding: 10px;
+  overflow: auto;
+  background: #10141a;
+  color: #9aa4b2;
+  font-size: 12px;
+  white-space: pre-wrap;
+}

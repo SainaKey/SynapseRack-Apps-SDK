@@ -1,0 +1,8 @@
+{
+    "id": "samples.control-surface",
+    "name": "Control Surface",
+    "version": "0.1.0",
+    "entry": "index.html",
+    "apiVersion": 0,
+    "capabilities": []
+}

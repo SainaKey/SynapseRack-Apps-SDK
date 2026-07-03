@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control Surface</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Control Surface</h1>
+      <p>Drives your <strong>existing</strong> layers — it creates nothing on the canvas. One strip per layer; move a fader to write the layer live.</p>
+      <button id="refresh" type="button">Refresh layers ⟲</button>
+    </header>
+
+    <!-- One .strip is cloned per layer at boot / refresh. -->
+    <template id="stripTemplate">
+      <div class="strip">
+        <div class="strip-head">
+          <span class="name">—</span>
+          <span class="badge"></span>
+        </div>
+        <label class="ctl">
+          <span class="ctl-label">opacity</span>
+          <input class="opacity" type="range" min="0" max="1" step="0.001" value="1">
+          <span class="val opacity-val">1.00</span>
+        </label>
+        <label class="ctl">
+          <span class="ctl-label">rotation Z</span>
+          <input class="rotz" type="range" min="-180" max="180" step="1" value="0">
+          <span class="val rotz-val">0&deg;</span>
+        </label>
+      </div>
+    </template>
+
+    <section id="strips" class="strips"></section>
+    <p id="empty" class="empty" hidden>No layers in this project. Add a layer in SynapseRack, then press Refresh.</p>
+
+    <pre id="log"></pre>
+  </main>
+
+  <!-- Real project (folder w/ manifest) => reference the sibling SDK file. -->
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>
