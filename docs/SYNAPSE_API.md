@@ -1,5 +1,6 @@
 # SynapseRack Apps API — apiVersion 0
 
+This is the API reference of the **SynapseRack Apps SDK** (the official name of this platform).
 This file is the complete reference for building a SynapseRack App. It is written so an AI
 assistant, given only this file, can write a working `index.html` on the first try. If you are
 that assistant: everything you need is below, plus `synapse.d.ts` in this same folder for exact
