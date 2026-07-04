@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spout / NDI Bridge</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Spout / NDI Bridge</h1>
+      <p>Pull external Spout / NDI sources in, composite them, and push the result back out over
+        MediaOut, Spout/Syphon, and NDI. Type source names by hand — v0 has no source enumeration.</p>
+    </header>
+
+    <!-- IN: two app-owned receivers. There is no source-enumeration API in v0, so the user types
+         the exact Spout source / NDI sender name; names apply on Enter or the Apply button. -->
+    <section class="io in">
+      <h2>Inputs</h2>
+
+      <div class="slot" id="spoutIn">
+        <div class="preview"></div>
+        <div class="row">
+          <label>Spout source
+            <input class="src" type="text" placeholder="e.g. Resolume - Composition (type exact name)">
+          </label>
+          <button class="apply" type="button">Apply</button>
+        </div>
+        <label class="opacity-row">opacity
+          <input class="opacity" type="range" min="0" max="1" step="0.001" value="1">
+        </label>
+      </div>
+
+      <div class="slot" id="ndiIn">
+        <div class="preview"></div>
+        <div class="row">
+          <label>NDI source
+            <input class="src" type="text" placeholder="e.g. MACHINE (Source) — type exact name">
+          </label>
+          <button class="apply" type="button">Apply</button>
+        </div>
+        <label class="opacity-row">opacity
+          <input class="opacity" type="range" min="0" max="1" step="0.001" value="1">
+        </label>
+      </div>
+    </section>
+
+    <!-- COMPOSITE: the app-owned stack mixer. Slot 0 (bottom) = Spout, slot 1 (top) = NDI. -->
+    <section class="composite">
+      <h2>Composite</h2>
+      <div class="preview" id="stackPreview"></div>
+      <p class="hint">Spout on the bottom slot, NDI on top. Drag the per-input opacity sliders above.</p>
+    </section>
+
+    <!-- OUT: same composite fanned out three ways. -->
+    <section class="io out">
+      <h2>Outputs</h2>
+      <ul class="outlist">
+        <li>MediaOut <code>Bridge</code> — pick it up from any node/output in the project.</li>
+        <li>Spout/Syphon <code>Bridge</code> — <span id="spoutOutStatus">publishing…</span></li>
+      </ul>
+      <div class="slot" id="ndiOut">
+        <div class="row">
+          <label>NDI send name
+            <input class="src" type="text" placeholder="e.g. SynapseRack Bridge" value="SynapseRack Bridge">
+          </label>
+          <button class="apply" type="button">Apply</button>
+        </div>
+      </div>
+    </section>
+
+    <pre id="log">starting…</pre>
+  </main>
+
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

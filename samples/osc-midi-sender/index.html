@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OSC / MIDI Sender</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>OSC / MIDI Sender</h1>
+      <p>Outbound control built from catalog nodes this app creates in its hidden scope. Move a slider and the value flows <code>float → output node → wire</code>. A teaching sample for <code>modules.create / set / connect</code>.</p>
+    </header>
+
+    <!-- OSC lane: float node --("Out"→"In")--> OSCFloatOutput -->
+    <section class="lane" id="oscLane">
+      <div class="lane-head">
+        <h2>OSC lane</h2>
+        <span class="lane-sub">float value → <code>OSCFloatOutput</code></span>
+      </div>
+
+      <label class="field">
+        <span>OSC address</span>
+        <input id="oscAddress" type="text" placeholder="/synapse/value" value="/synapse/value">
+      </label>
+
+      <label class="field slider-field">
+        <span>value <b id="oscValueLabel">0.500</b></span>
+        <input id="oscValue" type="range" min="0" max="1" step="0.001" value="0.5">
+      </label>
+
+      <!-- pure HTML/CSS wiring diagram of the chain this lane built -->
+      <div class="wire" aria-label="node chain">
+        <div class="node">
+          <div class="node-type">float</div>
+          <div class="port out">Out</div>
+        </div>
+        <div class="edge"><span class="edge-label">In (float)</span></div>
+        <div class="node accent">
+          <div class="node-type">OSCFloatOutput</div>
+          <div class="port in">In</div>
+          <div class="node-note">emits on value change</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MIDI lane: float node --("Out"→"Val")--> midi_output -->
+    <section class="lane" id="midiLane">
+      <div class="lane-head">
+        <h2>MIDI lane</h2>
+        <span class="lane-sub">float value → <code>midi_output</code> (CC)</span>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          <span>device name</span>
+          <input id="midiDevice" type="text" placeholder="exact output port name">
+        </label>
+        <label class="field small">
+          <span>channel (0–15)</span>
+          <input id="midiChannel" type="number" min="0" max="15" step="1" value="0">
+        </label>
+        <label class="field small">
+          <span>CC number (0–127)</span>
+          <input id="midiNumber" type="number" min="0" max="127" step="1" value="1">
+        </label>
+      </div>
+
+      <label class="field slider-field">
+        <span>value <b id="midiValueLabel">0.500</b></span>
+        <input id="midiValue" type="range" min="0" max="1" step="0.001" value="0.5">
+      </label>
+
+      <div class="wire" aria-label="node chain">
+        <div class="node">
+          <div class="node-type">float</div>
+          <div class="port out">Out</div>
+        </div>
+        <div class="edge"><span class="edge-label">Val (float)</span></div>
+        <div class="node accent">
+          <div class="node-type">midi_output</div>
+          <div class="port in">Val</div>
+          <div class="node-note">CC on value change</div>
+        </div>
+      </div>
+      <p class="lane-foot">Set <b>Type = ControlChange</b> on the <code>midi_output</code> node in SR to send CC (default is NoteOn). See the README.</p>
+    </section>
+
+    <p class="status" id="status">Connecting…</p>
+  </main>
+
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

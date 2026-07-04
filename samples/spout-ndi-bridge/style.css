@@ -1,0 +1,98 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d1014;
+  color: #f4f5f7;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+main {
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-height: 100%;
+  padding: 24px;
+}
+
+header { display: grid; gap: 4px; }
+h1 { margin: 0; font-size: 22px; font-weight: 700; }
+header p { margin: 0; color: #9aa4b2; max-width: 640px; }
+h2 { margin: 0 0 4px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #7f8b9c; }
+code { color: #a8d8ff; }
+
+section {
+  display: grid;
+  gap: 12px;
+  background: #12161c;
+  border: 1px solid #232a34;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.io.in { grid-template-columns: 1fr; }
+.io.in .slot + .slot { margin-top: 4px; }
+
+.slot {
+  display: grid;
+  gap: 8px;
+  background: #0f1319;
+  border: 1px solid #232a34;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.preview {
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  background: #05070a;
+  border: 1px solid #2b323d;
+  overflow: hidden;
+}
+#stackPreview { max-width: 520px; }
+
+.row { display: flex; align-items: flex-end; gap: 8px; }
+.row label { flex: 1; display: grid; gap: 4px; color: #9aa4b2; font-size: 12px; }
+
+.opacity-row { display: flex; align-items: center; gap: 10px; color: #9aa4b2; font-size: 12px; }
+.opacity-row .opacity { flex: 1; max-width: 220px; }
+
+.composite .hint { margin: 0; }
+.hint { color: #6b7482; font-size: 12px; }
+
+.outlist { margin: 0; padding-left: 18px; color: #9aa4b2; display: grid; gap: 4px; }
+
+button {
+  background: #1a2028;
+  color: #f4f5f7;
+  border: 1px solid #2b323d;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+button:hover { border-color: #4a90d9; }
+
+input[type="text"] {
+  background: #0a0d11;
+  color: #e7eaf0;
+  border: 1px solid #2b323d;
+  border-radius: 6px;
+  padding: 7px 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+pre#log {
+  min-height: 40px;
+  margin: 0;
+  border: 1px solid #232a34;
+  border-radius: 6px;
+  padding: 10px;
+  overflow: auto;
+  background: #10141a;
+  color: #9aa4b2;
+  font-size: 12px;
+  white-space: pre-wrap;
+}

@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reactive Pad</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Reactive Pad</h1>
+      <p>A performance surface that makes your INPUTS visible. MIDI and audio drive the published pixels
+      directly — the moving output IS the display (v0 has no value read-back). Output publishes as
+      MediaOut <code>Reactive Pad</code>. Wire it into your mix as an overlay.</p>
+    </header>
+
+    <!-- Live preview of the published stack (text "REACTIVE" over an animated background). -->
+    <section class="preview-wrap">
+      <div id="preview"></div>
+    </section>
+
+    <!-- Per-parameter binding rows. Each row: a MIDI button (bindings.midi, appears in the host's
+         MIDI-learn mode) and an AUDIO toggle that swaps the binding to bindings.follow. The two
+         are mutually exclusive per target — one host-side binding drives the parameter at a time. -->
+    <section class="params">
+      <div class="param" id="pFont">
+        <div class="p-label">Text size <span class="p-sub">text.fontSize</span></div>
+        <div class="p-row">
+          <button class="midi" type="button">MIDI</button>
+          <label class="audio-toggle"><input class="audio" type="checkbox"> AUDIO</label>
+          <select class="band">
+            <option value="audio.level">level</option>
+            <option value="audio.bass" selected>bass</option>
+            <option value="audio.mid">mid</option>
+            <option value="audio.high">high</option>
+          </select>
+        </div>
+        <div class="p-state">unbound</div>
+      </div>
+
+      <div class="param" id="pOpacity">
+        <div class="p-label">Word opacity <span class="p-sub">stack.opacity2 (text slot)</span></div>
+        <div class="p-row">
+          <button class="midi" type="button">MIDI</button>
+          <label class="audio-toggle"><input class="audio" type="checkbox"> AUDIO</label>
+          <select class="band">
+            <option value="audio.level" selected>level</option>
+            <option value="audio.bass">bass</option>
+            <option value="audio.mid">mid</option>
+            <option value="audio.high">high</option>
+          </select>
+        </div>
+        <div class="p-state">unbound</div>
+      </div>
+
+      <div class="param" id="pPulse">
+        <div class="p-label">Pulse glow <span class="p-sub">control &rarr; page-local canvas</span></div>
+        <div class="p-row">
+          <button class="midi" type="button">MIDI</button>
+          <span class="p-note">background flash, driven by a registered control's onChange</span>
+        </div>
+        <div class="p-state">unbound</div>
+      </div>
+    </section>
+
+    <p class="hint">
+      <strong>MIDI:</strong> click <em>MIDI</em>, then in SynapseRack turn on MIDI-learn mode and move a
+      fader/knob to assign it (v0 exposes no direct CC-number parameter — assignment happens in the host).
+      <strong>AUDIO:</strong> swaps that parameter to follow an audio band instead. A learned mapping
+      survives a reload but not a Stop or project re-open.
+    </p>
+
+    <pre id="log"></pre>
+  </main>
+
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

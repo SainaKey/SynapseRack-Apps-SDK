@@ -1,0 +1,135 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d1014;
+  color: #f4f5f7;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+main {
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-height: 100%;
+  padding: 24px;
+  max-width: 720px;
+}
+
+header { display: grid; gap: 4px; }
+h1 { margin: 0; font-size: 22px; font-weight: 700; }
+header p { margin: 0; color: #9aa4b2; }
+code { color: #a8d8ff; }
+
+.lane {
+  display: grid;
+  gap: 12px;
+  background: #12161c;
+  border: 1px solid #232a34;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.lane-head { display: flex; align-items: baseline; gap: 10px; }
+.lane-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.lane-sub { color: #9aa4b2; font-size: 12px; }
+
+.field { display: grid; gap: 5px; }
+.field > span { color: #9aa4b2; font-size: 12px; }
+.field > span b { color: #cdd5e0; font-variant-numeric: tabular-nums; }
+.slider-field input[type="range"] { width: 100%; }
+
+.field-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.field-row .field { flex: 1; min-width: 200px; }
+.field.small { flex: 0 0 120px; min-width: 120px; }
+
+input[type="text"],
+input[type="number"] {
+  background: #0a0d11;
+  color: #e7eaf0;
+  border: 1px solid #2b323d;
+  border-radius: 6px;
+  padding: 7px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+}
+input[type="text"]:focus,
+input[type="number"]:focus { outline: none; border-color: #4a90d9; }
+
+/* ---- wiring diagram (pure HTML/CSS teaching aid) ---- */
+.wire {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 10px 8px 4px;
+  border-top: 1px dashed #232a34;
+}
+
+.node {
+  display: grid;
+  gap: 4px;
+  align-content: center;
+  background: #0f141b;
+  border: 1px solid #2b323d;
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 130px;
+}
+.node.accent { border-color: #3a5f8f; background: #10161f; }
+.node-type {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 13px;
+  color: #a8d8ff;
+}
+.node.accent .node-type { color: #8fd0ff; }
+.port {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #6b7482;
+}
+.port.out { text-align: right; }
+.node-note { font-size: 11px; color: #57c78e; }
+
+.edge {
+  align-self: center;
+  position: relative;
+  flex: 1;
+  min-width: 60px;
+  height: 2px;
+  background: #3a5f8f;
+  margin: 0 4px;
+}
+.edge::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  border: 5px solid transparent;
+  border-left-color: #3a5f8f;
+}
+.edge-label {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  color: #9aa4b2;
+}
+
+.lane-foot { margin: 0; color: #6b7482; font-size: 12px; }
+.lane-foot b { color: #cdd5e0; }
+
+.status {
+  margin: 0;
+  border: 1px solid #232a34;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #10141a;
+  color: #9aa4b2;
+  font-size: 12px;
+  white-space: pre-wrap;
+}

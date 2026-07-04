@@ -73,6 +73,9 @@ For an agentic loop, SynapseRack ships a **dev-mode MCP server** (menu: *Synapse
 | [`bg-looper`](samples/bg-looper/) | A set-and-forget background video playlist: auto-advance driven by the player's `onEnd` event, playlist persisted in `storage`, missing files skipped without stalling. |
 | [`control-surface`](samples/control-surface/) | A performance panel for the user's existing layers (`layers.list` → opacity / rotation-Z faders) — and an honest note on what v0 bindings can't target yet. |
 | [`vj-notepad`](samples/vj-notepad/) | Live text overlays (`render.createText`): size/color/align on the fly, an 8-slot preset bank persisted in `storage`, flash mode. |
+| [`spout-ndi-bridge`](samples/spout-ndi-bridge/) | External texture I/O: the app creates Spout/NDI receiver nodes (`modules.create/set/connect`), composites them on a stack, and sends the result out three ways — MediaOut, Spout/Syphon, NDI. |
+| [`reactive-pad`](samples/reactive-pad/) | A performance surface where MIDI learn + audio-follow are VISIBLE: host-side bindings drive text size/opacity — the moving pixels are the input display. |
+| [`osc-midi-sender`](samples/osc-midi-sender/) | App UI → OSC/MIDI out, built entirely from catalog nodes with a wiring diagram in the UI — doubles as a `modules` API teaching aid, with v0's inbound limitations documented honestly. |
 
 Each sample folder is a complete app: copy it into your Apps folder as-is.
 

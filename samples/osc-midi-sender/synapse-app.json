@@ -1,0 +1,8 @@
+{
+    "id": "samples.osc-midi-sender",
+    "name": "OSC / MIDI Sender",
+    "version": "0.1.0",
+    "entry": "index.html",
+    "apiVersion": 0,
+    "capabilities": []
+}

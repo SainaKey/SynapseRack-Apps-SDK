@@ -73,6 +73,9 @@
 | [`bg-looper`](samples/bg-looper/) | 背景動画のプレイリストループ。プレイヤーの `onEnd` イベントで自動送り、`storage` でプレイリスト永続化、欠損ファイルはスキップして走り続ける。 |
 | [`control-surface`](samples/control-surface/) | ユーザーの既存レイヤーの操作卓（`layers.list` → opacity / rotationZ フェーダー）。v0でレイヤーがバインド対象にできない制限も正直に文書化。 |
 | [`vj-notepad`](samples/vj-notepad/) | ライブテキストオーバーレイ（`render.createText`）。サイズ・色・整列のライブ変更、`storage` 永続の8プリセットバンク、フラッシュ表示。 |
+| [`spout-ndi-bridge`](samples/spout-ndi-bridge/) | 外部テクスチャI/O: Spout/NDI受信ノードをアプリが生成（`modules.create/set/connect`）→ スタック合成 → MediaOut＋Spout/Syphon送出＋NDI送出の三重出し。 |
+| [`reactive-pad`](samples/reactive-pad/) | MIDI Learn＋オーディオフォローが「見える」パフォーマンス面。テキストサイズ/不透明度をホスト側バインドで駆動 — 動くピクセルがそのまま入力のディスプレイ。 |
+| [`osc-midi-sender`](samples/osc-midi-sender/) | アプリUI → OSC/MIDI送信。カタログノードだけで送信チェーンを構築し、UIに配線図つき — `modules` APIの教材を兼ねる。v0の入力系制約（値の読み戻し不可）も正直に文書化。 |
 
 各サンプルフォルダは完結したアプリです。そのままAppsフォルダにコピーしてください。
 
