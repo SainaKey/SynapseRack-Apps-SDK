@@ -34,12 +34,16 @@
     });
   }
 
-  /** Accepts a handle (anything with a `.textureId` or `.id`) or a raw string and returns the string
-   * the bridge expects as a `source`/`textureId` param. @param {*} value @returns {string|undefined} */
+  /** Accepts a handle (anything with a `.textureId`, `.output` or `.id`) or a raw string and returns
+   * the string the bridge expects as a `source`/`textureId` param. Raw bridge handles
+   * (render.createPlayer/createText/createChain results) carry the texture id in `output` while
+   * their `id` is a session resource id — so `output` must win over `id`.
+   * @param {*} value @returns {string|undefined} */
   function normalizeSource(value) {
     if (value == null) return undefined;
     if (typeof value === 'string') return value;
     if (typeof value.textureId === 'string') return value.textureId;
+    if (typeof value.output === 'string') return value.output;
     if (typeof value.id === 'string') return value.id;
     return undefined;
   }
