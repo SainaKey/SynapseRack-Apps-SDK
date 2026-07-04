@@ -20,14 +20,15 @@
       <div id="preview"></div>
     </section>
 
-    <!-- Per-parameter binding rows. Each row: a MIDI button (bindings.midi, appears in the host's
-         MIDI-learn mode) and an AUDIO toggle that swaps the binding to bindings.follow. The two
-         are mutually exclusive per target — one host-side binding drives the parameter at a time. -->
+    <!-- Per-parameter binding rows. Every parameter is ALWAYS MIDI-learnable (the natural model —
+         no arm button): the SDK badge shows MIDI / the learned signal, and in SR's learn mode the
+         whole row lights up as the click target. The AUDIO toggle swaps the parameter to
+         bindings.follow instead — one host-side binding drives the parameter at a time. -->
     <section class="params">
       <div class="param" id="pFont">
         <div class="p-label">Text size <span class="p-sub">text.fontSize</span></div>
         <div class="p-row">
-          <button class="midi" type="button">MIDI</button>
+          <span class="midi-badge"></span>
           <label class="audio-toggle"><input class="audio" type="checkbox"> AUDIO</label>
           <select class="band">
             <option value="audio.level">level</option>
@@ -42,7 +43,7 @@
       <div class="param" id="pOpacity">
         <div class="p-label">Word opacity <span class="p-sub">stack.opacity2 (text slot)</span></div>
         <div class="p-row">
-          <button class="midi" type="button">MIDI</button>
+          <span class="midi-badge"></span>
           <label class="audio-toggle"><input class="audio" type="checkbox"> AUDIO</label>
           <select class="band">
             <option value="audio.level" selected>level</option>
@@ -57,16 +58,17 @@
       <div class="param" id="pPulse">
         <div class="p-label">Pulse glow <span class="p-sub">control &rarr; page-local canvas</span></div>
         <div class="p-row">
-          <button class="midi" type="button">MIDI</button>
-          <span class="p-note">background flash, driven by a registered control's onChange</span>
+          <span class="p-note">always learnable on the background window — its whole canvas is the
+          learn target (the control, its binding, and its onChange all live there)</span>
         </div>
         <div class="p-state">unbound</div>
       </div>
     </section>
 
     <p class="hint">
-      <strong>MIDI:</strong> click <em>MIDI</em>, then in SynapseRack turn on MIDI-learn mode and move a
-      fader/knob to assign it (v0 exposes no direct CC-number parameter — assignment happens in the host).
+      <strong>MIDI:</strong> every parameter is always assignable — turn on MIDI-learn mode in
+      SynapseRack, click the highlighted row (or the background window for Pulse), and move a
+      fader/knob. The badge shows what is assigned (v0 exposes no direct CC-number parameter).
       <strong>AUDIO:</strong> swaps that parameter to follow an audio band instead. A learned mapping
       survives a reload but not a Stop or project re-open.
     </p>

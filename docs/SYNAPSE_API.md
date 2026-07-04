@@ -561,22 +561,32 @@ synapse.surface.onPointer(surface.surfaceId, (event) => {
 
 ### `synapse.controls`
 
-A registry that makes Web UI controls visible to the SR host (for future MIDI mapping — the
-mapping itself is not implemented yet in v0, only the registry).
+A registry that makes Web UI controls visible to the SR host — and, with `midi: true` plus an
+associated element, **automatically MIDI-learnable on your own UI**: in SR's learn mode the
+click-to-select overlay appears right on your control, exactly like a native SR slider. No separate
+`bindings.midi` call, no "arm MIDI" button.
 
 | Method | Params | Returns |
 |---|---|---|
-| `controls.register({id, label?, type?, value?, min?, max?, step?, midi?, group?, path?})` | `id` required | handle `{ ...control fields..., setValue(value), onChange(handler) }` |
+| `controls.register({id, label?, type?, value?, min?, max?, step?, midi?, anchor?, group?, path?})` | `id` required | handle `{ ...control fields..., setValue(value), onChange(handler) }` |
 | `controls.setValue(controlId, value)` | — | `SynapseControl` |
 | `controls.list()` | — | `SynapseControl[]` |
 | `controls.onChange(controlId, handler)` | `handler(value, control)` — client-side subscription to `control.update` events, not a host round trip | unsubscribe fn |
 
+The element association for `midi: true` comes from either the `anchor` option (CSS selector or
+Element) or a DOM node carrying `data-synapse-control="<id>"`. `midi: true` with NO associated
+element registers metadata only (arm explicitly via `bindings.midi` if you want the edge-chip
+fallback). The auto-armed binding uses the control's `min`/`max` and routes through the control, so
+your `onChange` fires and the Web UI stays in sync with the physical fader.
+
 ```js
+// <input type="range" id="fader" data-synapse-control="crossfade">  ← that attribute is enough
 const fader = await synapse.controls.register({
   id: 'crossfade', label: 'Crossfade', type: 'float', min: 0, max: 1, value: 0, midi: true
 });
 fader.onChange((value) => mixer.setValue(value));
 slider.addEventListener('input', (e) => fader.setValue(Number(e.target.value)));
+// (equivalently, pass it explicitly: { midi: true, anchor: '#fader' })
 ```
 
 Note: `setValue` also echoes back to YOUR OWN `onChange` handlers (the `control.update` event is
@@ -724,6 +734,13 @@ Raw bridge equivalent (no SDK):
 ```js
 await synapse.bindings.lfo({ target: { moduleId: mixerModuleId, path: 'mixValue' }, rate: '1' });
 await synapse.bindings.midi({ target: { controlId: 'fade' }, min: 0, max: 1 });
+
+// anchor (recommended): pin the MIDI-learn overlay onto YOUR page control. Pass a CSS selector or
+// an Element; in SR's learn mode the click-to-select overlay then sits exactly over that button and
+// follows it through resizes/layout changes. Without `anchor`, the learn target appears as a
+// labeled chip docked at the right edge of the SR window instead — functional, but users look for
+// it on your UI, so pass the anchor whenever the binding corresponds to a visible control.
+await synapse.bindings.midi({ target: { controlId: 'fade' }, min: 0, max: 1, anchor: '#fadeMidiBtn' });
 ```
 
 - **Rate** is a musical division in **bars**: `"1/4"`, `"1/2"`, `"1"` (= one bar = 4 beats), `"2"`,
@@ -736,6 +753,43 @@ await synapse.bindings.midi({ target: { controlId: 'fade' }, min: 0, max: 1 });
 - **A learned MIDI mapping survives a reload** (the binding is host-side and re-claimed by id, so it
   is not re-registered — the CC you assigned keeps working). It does not survive a full Stop or a
   project round-trip in v0.
+- **`anchor`** (MIDI only, optional): a CSS selector or Element for the page control this binding
+  belongs to. The MIDI-learn overlay is then rendered IN YOUR PAGE, exactly on that element (the SDK
+  draws it during SR's learn mode; clicking it selects the binding) instead of as a chip at the SR
+  window's edge. The anchor must live in the SAME window that calls `bindings.midi`.
+- **`bindings.badge(handle, host?)`** (anchored bindings only): a small always-visible chip rendered
+  into `host` (selector/Element; defaults to the anchor's parent) that reads `MIDI` until a signal
+  is learned, then the assignment (e.g. `CC 7 ch1`). In learn mode clicking it selects the binding,
+  same as the overlay. Place it to make your app visibly MIDI-capable at a glance.
+
+### MIDI learn UI — the natural model
+
+Design rule: **a control that has an associated element IS a MIDI-learn target.** Do not build "arm
+MIDI" buttons; associate the element and you are done. Three tiers, cheapest first:
+
+1. `controls.register({ ..., midi: true })` with a DOM node carrying
+   `data-synapse-control="<id>"` — fully automatic, zero extra code.
+2. `controls.register({ ..., midi: true, anchor: '#el' })` — same, explicit element.
+3. `bindings.midi({ target, anchor })` — for module-member targets (`{moduleId, path}`) or when you
+   want the returned handle (e.g. to place a `bindings.badge`).
+
+In SR's learn mode the SDK renders a click-to-select overlay **inside your page, exactly on each
+associated element** — pixel-perfect through scrolling, window drags and resizes, because the page
+owns the geometry. Values learned via MIDI route through the control, so your `onChange` fires and
+your UI follows the physical fader.
+
+Your page can also react to learn-mode state directly — the bridge dispatches window events:
+
+```js
+// {active, selectedTargetId} — learn mode toggled / selection changed
+window.addEventListener('synapse:midi-learn', (e) => showLearnBanner(e.detail.active));
+// {targetId, signal, removed} — a mapping was assigned or removed; signal is the normalized
+// key ("midi:cc:0:7" = CC7 ch1, "midi:note:8:41" = note 41 ch9)
+window.addEventListener('synapse:midi-mapped', (e) => updateAssignmentCounter(e.detail));
+```
+
+The `midi-gallery` sample is the reference implementation: 42 controls (buttons, toggles, vertical
+faders, sliders, rotary knobs, pads) across six layouts, exercising every tier plus the events.
 
 ## Persistence: your app belongs to the project
 
@@ -879,3 +933,23 @@ For a single-instance app all of the above collapses to the v0 behavior: `slot` 
   `synapse-sdk.js`'s contents directly in a `<script>` tag rather than `<script src="...">`, since
   such files may be loaded as standalone content without their sibling files. Real projects (a
   folder with `synapse-app.json`) can use `<script src="./synapse-sdk.js">` normally.
+
+## Developing against a live rack (MCP server)
+
+If you are an AI assistant building an app: SynapseRack ships a **dev-mode MCP server** you may be
+connected to (Streamable HTTP on `http://127.0.0.1:8765/`, off by default — the user enables it via
+*SynapseRack > Synapse Apps > MCP Server* or the AppHub toolbar). It turns "write code blind" into a
+verify loop against the LIVE rack:
+
+- `list_apps` — running app instances (address the others by `instanceId`)
+- `invoke { appId, method, params }` — call ANY method in this document on a running app and see
+  the real result (e.g. `bindings.list` to confirm your bindings actually armed)
+- `read_console { appId, severity? }` — the app's console; check `severity: "error"` after edits
+- `reload_app { appId }` — hot-reload after editing `main.js`, then re-verify
+- `graph_state` / `graph_node_types` / `graph_create_node` / `graph_delete_node` / `graph_connect` /
+  `graph_disconnect` — operate on the USER'S visible node graph (not your app's hidden scope);
+  changes are undoable by the user, so be conservative and `graph_state` before mutating
+
+Recommended loop: edit → `reload_app` → `read_console` for errors → `invoke` to assert the resulting
+state — instead of asking the user to eyeball every change. Full setup and security notes live in
+the SDK repository's `docs/MCP_SERVER.md`.

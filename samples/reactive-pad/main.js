@@ -31,9 +31,11 @@ function write(value) {
   log.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
 }
 
-// Persisted record of which binding kind ('midi' | 'audio' | 'none') each parameter uses,
-// and the selected audio band. Project-independent presets, via synapse.storage.
-const bindingState = { font: 'none', opacity: 'none', pulse: 'none', fontBand: 'audio.bass', opacityBand: 'audio.level' };
+// Persisted record of which binding kind each parameter uses, and the selected audio band.
+// Natural model: 'midi' is the DEFAULT (every parameter is always learnable); 'audio' is the only
+// other state. Old saves may still contain 'none' — applyPersisted treats anything non-'audio' as
+// 'midi', so they migrate silently. Project-independent presets, via synapse.storage.
+const bindingState = { font: 'midi', opacity: 'midi', pulse: 'midi', fontBand: 'audio.bass', opacityBand: 'audio.level' };
 
 async function loadBindingState() {
   try {
@@ -91,27 +93,32 @@ function backgroundWindowHtml(controlId) {
       requestAnimationFrame(draw);
 
       // Register the pulse control HERE so its onChange stays in-window and drives the canvas
-      // with no cross-window traffic. midi:true makes it appear in SR's MIDI-learn mode; the
-      // MIDI binding below routes an assigned CC through this control (firing onChange).
+      // with no cross-window traffic. Natural model: the control is ALWAYS MIDI-learnable —
+      // anchor '#bg' makes the whole canvas the learn-mode click target.
+      //
+      // claim() runs on a slow heartbeat, not just once: every MAIN-window reload starts a new
+      // epoch that sweeps instance resources the reloaded code does not re-claim, but this CHILD
+      // page only re-runs when its own html changes — so it must re-claim its control + binding
+      // periodically. Both calls are keyed get-or-create: no-ops while alive, instant re-create
+      // after a sweep. A discrete control-plane heartbeat, NOT a per-frame call.
       (async function(){
-        try{
-          const ctl=await window.synapse.controls.register({
-            id:CONTROL_ID, label:'Reactive Pulse', type:'float', min:0, max:1, value:0, midi:true
-          });
-          window.synapse.controls.onChange(CONTROL_ID,(value)=>{
-            const v=Number(value); if(!isNaN(v)) pulseTarget=Math.max(0,Math.min(1,v));
-          });
-          // Re-arm MIDI when the main window asks (it flips a storage flag on its MIDI button).
-          async function syncArm(){
-            try{
-              const r=await window.synapse.storage.get('reactivePad.pulseMidi');
-              if(r&&r.exists&&r.value) await window.synapse.bindings.midi({ target:{controlId:CONTROL_ID}, min:0, max:1 });
-            }catch(e){}
-          }
-          await syncArm();
-          // Poll the arm flag rarely (2s) — a discrete control-plane check, NOT a per-frame draw call.
-          setInterval(syncArm,2000);
-        }catch(e){ /* controls unavailable — background still animates on t alone */ }
+        // window.synapse is injected by the host bootstrap; on a fresh child page this inline
+        // script can run first, so wait for it (the same thing SynapseSDK.connect does in the
+        // main window — this page deliberately has no SDK include).
+        while(!window.synapse){ await new Promise(r=>setTimeout(r,50)); }
+        async function claim(){
+          try{
+            await window.synapse.controls.register({
+              id:CONTROL_ID, label:'Reactive Pulse', type:'float', min:0, max:1, value:0, midi:true
+            });
+            await window.synapse.bindings.midi({ target:{controlId:CONTROL_ID}, min:0, max:1, anchor:'#bg' });
+          }catch(e){ console.error('[reactive-pad] pulse claim failed', e); }
+        }
+        await claim();
+        window.synapse.controls.onChange(CONTROL_ID,(value)=>{
+          const v=Number(value); if(!isNaN(v)) pulseTarget=Math.max(0,Math.min(1,v));
+        });
+        setInterval(claim, 3000);
       })();
     })();
     <\/script>
@@ -120,11 +127,14 @@ function backgroundWindowHtml(controlId) {
 
 // ---- per-parameter binding rows (host-side; mutually exclusive MIDI vs AUDIO) ----------------
 
-// Wire one parameter's MIDI button + AUDIO toggle to bindings against a {moduleId, path} target.
-// stateKey/bandKey index into bindingState; unbindId is the stable binding id we remove on swap.
+// Wire one parameter row against a {moduleId, path} target. Natural model: the parameter is
+// ALWAYS MIDI-learnable — no arm button. The SDK badge (bindings.badge) sits in the row showing
+// MIDI / the learned signal, and the whole row is the learn-mode click target (anchor: root).
+// The AUDIO toggle swaps the target to bindings.follow (one host-side binding drives a parameter
+// at a time); unchecking it re-arms MIDI.
 function wireModuleParam(rootId, target, stateKey, bandKey, range) {
   const root = document.querySelector(rootId);
-  const midiBtn = root.querySelector('.midi');
+  const badgeHost = root.querySelector('.midi-badge');
   const audioChk = root.querySelector('.audio');
   const bandSel = root.querySelector('.band');
   const stateEl = root.querySelector('.p-state');
@@ -134,31 +144,28 @@ function wireModuleParam(rootId, target, stateKey, bandKey, range) {
   if (bandKey && bindingState[bandKey]) bandSel.value = bindingState[bandKey];
 
   function paint() {
-    midiBtn.classList.toggle('active', bindingState[stateKey] === 'midi');
-    audioChk.checked = bindingState[stateKey] === 'audio';
-    bandSel.disabled = bindingState[stateKey] !== 'audio';
-    stateEl.textContent =
-      bindingState[stateKey] === 'midi' ? 'MIDI-learnable (assign in host)' :
-      bindingState[stateKey] === 'audio' ? 'following ' + bandSel.value :
-      'unbound';
+    const audio = bindingState[stateKey] === 'audio';
+    audioChk.checked = audio;
+    bandSel.disabled = !audio;
+    stateEl.textContent = audio
+      ? 'following ' + bandSel.value
+      : 'MIDI-learnable — enter learn mode and click this row';
   }
 
-  async function clearBindings() {
-    // Remove whichever host-side binding currently drives this target (id-keyed, idempotent).
-    try { await window.synapse.bindings.remove(midiId); } catch (e) {}
+  async function armMidi() {
     try { await window.synapse.bindings.remove(audioId); } catch (e) {}
-  }
-
-  async function bindMidi() {
-    await clearBindings();
-    await window.synapse.bindings.midi({ id: midiId, target, min: range.min, max: range.max });
+    // anchor: the whole row — in learn mode it lights up as one big click target.
+    const handle = await window.synapse.bindings.midi({
+      id: midiId, target, min: range.min, max: range.max, anchor: root
+    });
+    // (Re-)create the badge after every arm: bindings.remove tears the old one down.
+    window.synapse.bindings.badge(handle, badgeHost);
     bindingState[stateKey] = 'midi';
     saveBindingState(); window.synapse.app.setState(bindingState); paint();
-    write(rootId + ': MIDI-learn armed — assign a CC in the host.');
   }
 
   async function bindAudio() {
-    await clearBindings();
+    try { await window.synapse.bindings.remove(midiId); } catch (e) {}
     await window.synapse.bindings.follow({
       id: audioId, target, source: bandSel.value, min: range.min, max: range.max, smooth: 0.4
     });
@@ -168,51 +175,28 @@ function wireModuleParam(rootId, target, stateKey, bandKey, range) {
     write(rootId + ': following ' + bandSel.value + '.');
   }
 
-  async function unbind() {
-    await clearBindings();
-    bindingState[stateKey] = 'none';
-    saveBindingState(); window.synapse.app.setState(bindingState); paint();
-    write(rootId + ': unbound.');
-  }
-
-  midiBtn.addEventListener('click', () => {
-    if (bindingState[stateKey] === 'midi') { unbind(); } else { bindMidi(); }
-  });
   audioChk.addEventListener('change', () => {
-    if (audioChk.checked) { bindAudio(); } else { unbind(); }
+    if (audioChk.checked) { bindAudio(); } else { armMidi(); }
   });
   bandSel.addEventListener('change', () => {
     if (bindingState[stateKey] === 'audio') bindAudio();   // re-follow the newly selected band
   });
 
-  return { paint, bindMidi, bindAudio, unbind };
+  return { paint, armMidi, bindAudio };
 }
 
-// The Pulse row targets a control in the BACKGROUND window, which owns the control + its
-// onChange + its MIDI binding. This main-window button only flips a storage flag the child
-// reads (discretely) to arm/disarm the MIDI binding — a control registered in one window
-// cannot be bound from another in v0, so the actual bindings.midi call happens in the child.
+// The Pulse parameter targets a control in the BACKGROUND window, which owns the control + its
+// onChange + its MIDI binding (a control registered in one window cannot be bound from another
+// in v0). The child arms it unconditionally at boot — this main-window row is display only.
 function wirePulseParam(rootId) {
   const root = document.querySelector(rootId);
-  const midiBtn = root.querySelector('.midi');
   const stateEl = root.querySelector('.p-state');
 
   function paint() {
-    const on = bindingState.pulse === 'midi';
-    midiBtn.classList.toggle('active', on);
-    stateEl.textContent = on ? 'MIDI-learnable (assign in host)' : 'unbound';
+    stateEl.textContent = 'MIDI-learnable — in learn mode, click the background window';
   }
 
-  async function setArm(on) {
-    try { await window.synapse.storage.set('reactivePad.pulseMidi', on); } catch (e) {}
-    bindingState.pulse = on ? 'midi' : 'none';
-    saveBindingState(); window.synapse.app.setState(bindingState); paint();
-    write(rootId + (on ? ': MIDI-learn armed for the pulse control — assign a CC in the host.'
-                       : ': pulse MIDI disarmed.'));
-  }
-
-  midiBtn.addEventListener('click', () => setArm(bindingState.pulse !== 'midi'));
-  return { paint, setArm };
+  return { paint };
 }
 
 async function boot() {
@@ -266,13 +250,14 @@ async function boot() {
     { moduleId: stack.moduleId, path: 'opacity2' }, 'opacity', 'opacityBand', { min: OPACITY_MIN, max: OPACITY_MAX });
   const pulseRow = wirePulseParam('#pPulse');
 
-  // Re-apply persisted binding kinds so a reload restores the same MIDI/AUDIO wiring.
+  // Re-apply persisted binding kinds so a reload restores the same MIDI/AUDIO wiring. Natural
+  // model: anything that is not explicitly 'audio' arms MIDI — this also migrates old saves that
+  // still contain 'none' (the retired arm-button state). Pulse arms itself in the child window.
   async function applyPersisted() {
-    if (bindingState.font === 'midi') await fontRow.bindMidi();
-    else if (bindingState.font === 'audio') await fontRow.bindAudio();
-    if (bindingState.opacity === 'midi') await opacityRow.bindMidi();
-    else if (bindingState.opacity === 'audio') await opacityRow.bindAudio();
-    if (bindingState.pulse === 'midi') await pulseRow.setArm(true);
+    if (bindingState.font === 'audio') await fontRow.bindAudio();
+    else await fontRow.armMidi();
+    if (bindingState.opacity === 'audio') await opacityRow.bindAudio();
+    else await opacityRow.armMidi();
     fontRow.paint(); opacityRow.paint(); pulseRow.paint();
   }
 
@@ -289,7 +274,8 @@ async function boot() {
   window.synapse.app.setState(bindingState);
 
   await window.synapse.app.ready();
-  write('Ready. Output publishes as MediaOut "Reactive Pad". Assign MIDI in the host, or toggle AUDIO to follow the music.');
+  write('Ready. Output publishes as MediaOut "Reactive Pad". Every parameter is MIDI-learnable ' +
+        '(enter learn mode in the host and click a row), or toggle AUDIO to follow the music.');
 }
 
 boot().catch((error) => write(String(error && error.synapse ? JSON.stringify(error.synapse) : error)));

@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIDI Gallery</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div class="head-row">
+        <h1>MIDI Gallery</h1>
+        <div id="learnBanner" class="learn-banner">LEARN MODE</div>
+      </div>
+      <p>A control-surface benchmark for the MIDI learn system: <strong id="statTotal">0</strong> controls,
+      every one always MIDI-learnable, <strong id="statMapped">0</strong> assigned. Enter MIDI-learn mode
+      in SynapseRack — every control on this page should light up exactly where it is, through scrolling,
+      window drags and resizes.</p>
+    </header>
+
+    <!-- Layout 1: horizontal row of momentary buttons (auto-armed via controls.register). -->
+    <section class="panel">
+      <h2>Momentary <span class="sub">buttons — press = 1, release = 0 (map pads/notes; NoteOff releases)</span></h2>
+      <div id="transport" class="transport"></div>
+    </section>
+
+    <!-- Layout 2: grid of latching toggles (auto-armed). -->
+    <section class="panel">
+      <h2>Toggles <span class="sub">value &ge; 0.5 = on (map a CC/fader as a threshold switch)</span></h2>
+      <div id="toggles" class="toggle-grid"></div>
+    </section>
+
+    <div class="columns">
+      <!-- Layout 3: vertical fader strip (explicit bindings.midi + badge). -->
+      <section class="panel col-wide">
+        <h2>Mixer <span class="sub">vertical faders, badge shows the learned signal</span></h2>
+        <div id="mixer" class="mixer"></div>
+      </section>
+
+      <!-- Layout 4: dense column of compact horizontal sliders (explicit + badge). -->
+      <section class="panel col-narrow">
+        <h2>Trims <span class="sub">compact rows</span></h2>
+        <div id="trims" class="trims"></div>
+      </section>
+    </div>
+
+    <!-- Layout 5: rotary knobs — visually knobs, wired exactly like the sliders (drag vertically). -->
+    <section class="panel">
+      <h2>Knobs <span class="sub">drag up/down — same control+binding wiring as a slider, different skin</span></h2>
+      <div id="knobs" class="knobs"></div>
+    </section>
+
+    <!-- Layout 6: big 4x4 pad grid (auto-armed) — the stress part of the benchmark. -->
+    <section class="panel">
+      <h2>Pads <span class="sub">4&times;4, velocity-sensitive flash (hit hard — soft NoteOns are gated host-side)</span></h2>
+      <div id="pads" class="pad-grid"></div>
+    </section>
+
+    <p class="hint">
+      Everything here is a registered control with an anchored MIDI binding — no arm buttons anywhere
+      (the natural model). Sections mix the two wiring patterns: <code>controls.register({ midi: true,
+      anchor })</code> auto-arms with zero extra code; the mixer/trims arm explicitly via
+      <code>bindings.midi</code> to place a <code>bindings.badge</code>.
+    </p>
+
+    <pre id="log"></pre>
+  </main>
+
+  <script src="./synapse-sdk.js"></script>
+  <script src="./main.js"></script>
+</body>
+</html>

@@ -143,7 +143,9 @@ async function boot() {
   // zero per-frame JS, keeps moving even while this window idles).
   const slider = document.querySelector('#crossfade');
   slider.addEventListener('input', (e) => mixer.value.set(Number(e.target.value)));
-  await mixer.value.bindMidi({ min: 0, max: 1 });
+  // anchor: the slider itself is the MIDI-learn target — in SR's learn mode the overlay appears
+  // right on this fader, like a native SR slider.
+  await mixer.value.bindMidi({ min: 0, max: 1, anchor: '#crossfade' });
 
   const autoButton = document.querySelector('#autoFade');
   autoButton.addEventListener('click', async () => {

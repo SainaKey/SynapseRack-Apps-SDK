@@ -1,0 +1,9 @@
+{
+    "id": "samples.midi-gallery",
+    "name": "MIDI Gallery",
+    "version": "0.1.0",
+    "entry": "index.html",
+    "apiVersion": 0,
+    "capabilities": [],
+    "multiInstance": false
+}

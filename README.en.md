@@ -61,7 +61,7 @@ The docs are designed to be the prompt:
 - [`docs/synapse.d.ts`](docs/synapse.d.ts) — exact TypeScript shapes for every call.
 - [`docs/NODE_CATALOG.md`](docs/NODE_CATALOG.md) — every node type `synapse.modules` can create, with ports and settable members. Auto-generated from the live node registry.
 
-For an agentic loop, SynapseRack ships a **dev-mode MCP server** (menu: *SynapseRack → Synapse Apps → MCP Server*; off by default, loopback-only, per-session opt-in). It speaks JSON-RPC on `http://127.0.0.1:8765/` and exposes `list_apps`, `invoke` (call any bridge method on a running app), `read_console`, and `reload_app` — so an assistant can drive and debug a live SynapseRack while you watch.
+For an agentic loop, SynapseRack ships a **dev-mode MCP server** (off by default, loopback-only, per-session opt-in). A single `invoke` tool reaches every bridge API of a running app, so an assistant can drive and debug a live SynapseRack while you watch. Setup, the full tool list, and example workflows: [`docs/MCP_SERVER.en.md`](docs/MCP_SERVER.en.md).
 
 ## Samples
 
@@ -76,6 +76,7 @@ For an agentic loop, SynapseRack ships a **dev-mode MCP server** (menu: *Synapse
 | [`spout-ndi-bridge`](samples/spout-ndi-bridge/) | External texture I/O: the app creates Spout/NDI receiver nodes (`modules.create/set/connect`), composites them on a stack, and sends the result out three ways — MediaOut, Spout/Syphon, NDI. |
 | [`reactive-pad`](samples/reactive-pad/) | A performance surface where MIDI learn + audio-follow are VISIBLE: host-side bindings drive text size/opacity — the moving pixels are the input display. |
 | [`osc-midi-sender`](samples/osc-midi-sender/) | App UI → OSC/MIDI out, built entirely from catalog nodes with a wiring diagram in the UI — doubles as a `modules` API teaching aid, with v0's inbound limitations documented honestly. |
+| [`midi-gallery`](samples/midi-gallery/) | A MIDI-learn benchmark: 38 controls (buttons / toggles / vertical faders / sliders / pads) across five layouts, every one always learnable. Demonstrates both auto-arm (`midi: true` + `anchor`) and explicit arm + badge. |
 
 Each sample folder is a complete app: copy it into your Apps folder as-is.
 

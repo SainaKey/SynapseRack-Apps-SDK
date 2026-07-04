@@ -57,7 +57,8 @@
    */
   function attachBindings(valueHandle, target) {
     /** MIDI-learnable: shows up in SR's MIDI learn mode; maps an incoming CC (0..1) through optional
-     * {min,max}. @param {{id?: string, min?: number, max?: number}} [options] */
+     * {min,max}. nchor (selector/Element) pins SR's learn overlay onto that page control.
+     * @param {{id?: string, min?: number, max?: number, anchor?: (string|Element)}} [options] */
     valueHandle.bindMidi = (options) =>
       window.synapse.bindings.midi(Object.assign({ target }, options || {}));
     /** Tempo-synced (or {hz}) LFO. @param {{id?: string, rate?: string, hz?: number,

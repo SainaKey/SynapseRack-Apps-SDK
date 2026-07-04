@@ -833,10 +833,14 @@ interface SynapseControlDefinition {
   min?: number;
   max?: number;
   step?: number;
-  /** Marks this control as MIDI-mappable intent. Actual MIDI learn is wired via a binding —
-   * `control.value.bindMidi()` on the SDK handle, or `synapse.bindings.midi({ target: { controlId } })`
-   * on the raw bridge. */
+  /** Makes this control MIDI-learnable. With an associated element (the `anchor` option, or a DOM
+   * node carrying data-synapse-control="<id>") a MIDI binding is auto-armed and SR's learn overlay
+   * appears on that element — the app's UI is naturally the learn target, like a native SR slider.
+   * Without an element this is registry metadata only (arm explicitly via bindings.midi). */
   midi?: boolean;
+  /** Element association for `midi: true`: CSS selector or Element in this window. Client-side
+   * only — never sent to the host registry. */
+  anchor?: string | Element;
   group?: string;
   path?: string;
 }
@@ -887,6 +891,13 @@ interface SynapseBindMidiOptions {
   /** Incoming MIDI value (0..1) is mapped through [min, max] (defaults 0..1). */
   min?: number;
   max?: number;
+  /**
+   * The page control this binding belongs to (CSS selector or Element, in the SAME window that
+   * calls bindings.midi). SR's MIDI-learn overlay then renders on top of that element — tracked
+   * through layout changes — instead of as a chip docked at the host window's edge. Recommended
+   * whenever the binding corresponds to a visible control.
+   */
+  anchor?: string | Element;
 }
 
 interface SynapseLfoOptions {
@@ -924,7 +935,8 @@ interface SynapseBinding {
 
 interface SynapseBindingsApi {
   /** Makes a target MIDI-mappable (visible in SR's MIDI learn mode). Keyed get-or-create; a same-id
-   * re-claim keeps the learned mapping (it survives a reload). */
+   * re-claim keeps the learned mapping (it survives a reload). With `anchor`, the learn overlay is
+   * rendered in-page on that element during learn mode (click to select). */
   midi(options: SynapseBindMidiOptions): Promise<SynapseBinding>;
   /** Tempo-synced (rate) or free-running ({hz}) LFO. Keyed get-or-create. */
   lfo(options: SynapseLfoOptions): Promise<SynapseBinding>;
@@ -934,6 +946,13 @@ interface SynapseBindingsApi {
   remove(id: string): Promise<{ id: string; removed: boolean }>;
   /** Lists this app's active bindings. */
   list(): Promise<SynapseBinding[]>;
+  /**
+   * Always-visible MIDI chip for an ANCHORED binding: reads `MIDI` until a signal is learned, then
+   * the assignment (e.g. `CC 7 ch1`). In learn mode clicking it selects the binding, same as the
+   * overlay. Appended to `host` (selector/Element; defaults to the anchor's parent). Returns the
+   * badge element. Throws if the binding id has no anchored element in this window.
+   */
+  badge(handleOrId: SynapseBinding | string, host?: string | Element): HTMLElement;
 }
 
 interface SynapseControlsApi {
@@ -996,12 +1015,45 @@ interface SynapseBridge {
   storage: SynapseStorageApi;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Bridge window events — the bootstrap re-dispatches every host push as a window CustomEvent, so
+// pages can react without registering per-id handlers.
+// ---------------------------------------------------------------------------------------------
+
+/** detail of 'synapse:midi-learn' — SR's MIDI-learn mode toggled or the selected target changed. */
+interface SynapseMidiLearnDetail {
+  active: boolean;
+  selectedTargetId: string | null;
+}
+
+/** detail of 'synapse:midi-mapped' — a MIDI mapping was assigned to / removed from some learn
+ * target. `signal` is the normalized key ("midi:cc:0:7" = CC7 ch1, "midi:note:8:41" = note 41
+ * ch9, "key:32", "osc:/fader:0"). Filter by the targetIds of your own bindings. */
+interface SynapseMidiMappedDetail {
+  targetId: string;
+  signal: string;
+  removed: boolean;
+}
+
 declare global {
   interface Window {
     /** The host bridge, injected by SynapseRack before your app's scripts run. */
     synapse: SynapseBridge;
     /** The userland SDK, attached by synapse-sdk.js if that script is included. */
     SynapseSDK: SynapseSDKNamespace;
+  }
+
+  interface WindowEventMap {
+    'synapse:midi-learn': CustomEvent<SynapseMidiLearnDetail>;
+    'synapse:midi-mapped': CustomEvent<SynapseMidiMappedDetail>;
+    /** {type, surfaceId, event} — pointer forwarded from a captured surface overlay. */
+    'synapse:surface-pointer': CustomEvent<{ surfaceId: string; event: Record<string, unknown> }>;
+    /** {type, playerId, kind} — render.player loop point / final end. */
+    'synapse:render-player-end': CustomEvent<{ playerId: string; kind: string }>;
+    /** {type, controlId, value, origin, control} — any control value change. */
+    'synapse:control-update': CustomEvent<{ controlId: string; value: unknown; origin: string; control: SynapseControl }>;
+    /** {type, state} — saved app state delivered after a project round-trip. */
+    'synapse:app-restore': CustomEvent<{ state: unknown }>;
   }
 }
 

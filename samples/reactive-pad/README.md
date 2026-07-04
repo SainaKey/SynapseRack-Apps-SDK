@@ -27,7 +27,10 @@ Each parameter has a **MIDI** button that creates a host-side binding on that ta
 control the same way you would any SR parameter:
 
 1. Click **MIDI** on a parameter (it turns on; the parameter now appears in SR's MIDI-learn mode).
-2. In SynapseRack, enter **MIDI-learn mode** and move the fader/knob you want to map.
+2. In SynapseRack, enter **MIDI-learn mode** — a blue learn overlay appears **on the app's MIDI
+   button itself** (the binding passes `anchor`, so the target sits on this UI, not at the screen
+   edge). Click it (turns red = selected).
+3. Move the fader/knob (or hit the pad — firmly) you want to map. Done; the mapping runs host-side.
 
 The mapping runs **natively in the host** — no per-frame JS. Text size and word opacity bind
 directly to their module members (`{ moduleId, path }`). The **Pulse glow** binds to a control that

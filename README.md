@@ -61,7 +61,7 @@
 - [`docs/synapse.d.ts`](docs/synapse.d.ts) — 全API呼び出しの正確なTypeScript型。
 - [`docs/NODE_CATALOG.md`](docs/NODE_CATALOG.md) — `synapse.modules` が生成できる全ノードタイプ（ポート・設定可能メンバーつき）。実行中のノードレジストリから自動生成されています。
 
-エージェント的なループには、SynapseRack本体の**開発モードMCPサーバー**が使えます（メニュー: *SynapseRack → Synapse Apps → MCP Server*。デフォルトOFF・ループバック限定・セッションごとのオプトイン）。`http://127.0.0.1:8765/` のJSON-RPCで `list_apps` / `invoke`（実行中アプリの任意のブリッジメソッド呼び出し）/ `read_console` / `reload_app` が使えるので、AIが生きているSynapseRackを直接操作・デバッグできます。
+エージェント的なループには、SynapseRack本体の**開発モードMCPサーバー**が使えます（デフォルトOFF・ループバック限定・セッションごとのオプトイン）。`invoke` ツール1つでアプリの全ブリッジAPIに届くので、AIが生きているSynapseRackを直接操作・デバッグできます。起動方法・全ツール・ワークフロー例は [`docs/MCP_SERVER.md`](docs/MCP_SERVER.md) を参照。
 
 ## サンプル
 
@@ -76,6 +76,7 @@
 | [`spout-ndi-bridge`](samples/spout-ndi-bridge/) | 外部テクスチャI/O: Spout/NDI受信ノードをアプリが生成（`modules.create/set/connect`）→ スタック合成 → MediaOut＋Spout/Syphon送出＋NDI送出の三重出し。 |
 | [`reactive-pad`](samples/reactive-pad/) | MIDI Learn＋オーディオフォローが「見える」パフォーマンス面。テキストサイズ/不透明度をホスト側バインドで駆動 — 動くピクセルがそのまま入力のディスプレイ。 |
 | [`osc-midi-sender`](samples/osc-midi-sender/) | アプリUI → OSC/MIDI送信。カタログノードだけで送信チェーンを構築し、UIに配線図つき — `modules` APIの教材を兼ねる。v0の入力系制約（値の読み戻し不可）も正直に文書化。 |
+| [`midi-gallery`](samples/midi-gallery/) | MIDI learnのベンチマーク: ボタン/トグル/縦フェーダー/スライダー/パッド計38コントロール×5レイアウト、全部が常時学習対象。自動arm（`midi:true`+`anchor`）と明示arm＋バッジの両パターンを実演。 |
 
 各サンプルフォルダは完結したアプリです。そのままAppsフォルダにコピーしてください。
 
