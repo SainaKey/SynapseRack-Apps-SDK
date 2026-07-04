@@ -10,8 +10,9 @@ Generated from the live node registry (do not edit by hand — regenerate via
   the tables below. The call returns the module's `{ id }` (its moduleId).
 - **Set** a member: `await synapse.modules.set(moduleId, "<path>", value)` — `<path>` is a
   settable path from the node's row. Value type is shown next to the path.
-- **Connect** ports: `await synapse.modules.connect({ fromModuleId, fromPort, toModuleId, toPort })`
-  — `fromPort`/`toPort` are the port **ids** in the in/out summary.
+- **Connect** ports: `await synapse.modules.connect(fromModuleId, fromPort, toModuleId, toPort)`
+  — POSITIONAL arguments (matching synapse.d.ts); `fromPort`/`toPort` are the port **ids**
+  in the in/out summary.
 - **Bind** a continuous float source to a node member: target `{ moduleId, path }`, where
   `path` is a settable path whose type is `float`.
 - The exact same data is available at runtime via `await synapse.modules.types()`.
